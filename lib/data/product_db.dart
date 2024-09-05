@@ -53,6 +53,7 @@ class ProductDbManager {
       name TEXT,
       price REAL,
       stock INTEGER,
+      images TEXT,
       FOREIGN KEY(product_id) REFERENCES products(id)
       ''');
   }
@@ -87,7 +88,8 @@ class ProductDbManager {
         'product_id': product.id,
         'name': variant.name,
         'price': variant.price,
-        'stock': variant.stock
+        'stock': variant.stock,
+        'images': variant.images.join(',')
       });
     }
   }
@@ -141,7 +143,8 @@ class ProductDbManager {
         id: variantMap['id'] as String,
         name: variantMap['name'] as String,
         price: variantMap['price'] as double,
-        stock: variantMap['stock'] as int
+        stock: variantMap['stock'] as int,
+        images: (variantMap['images'] as String).split(',')
       );
     }).toList();
   }
