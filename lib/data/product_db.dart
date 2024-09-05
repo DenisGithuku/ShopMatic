@@ -53,7 +53,6 @@ class ProductDbManager {
       name TEXT,
       price REAL,
       stock INTEGER,
-      image TEXT,
       FOREIGN KEY(product_id) REFERENCES products(id)
       ''');
   }
