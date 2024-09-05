@@ -7,7 +7,7 @@ class Product {
   final List<String> tags;
   final List<Option> options;
   final List<Variant> variants;
-  final String? imagePath;
+  final String? image;
 
   Product({
     required this.id,
@@ -18,7 +18,7 @@ class Product {
     required this.tags,
     required this.options,
     required this.variants,
-    required this.imagePath,
+    required this.image,
   });
 }
 
