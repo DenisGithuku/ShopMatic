@@ -71,7 +71,7 @@ class ProductDbManager {
       'options': product.options,
       'variants': product.variants,
       'image': product.image
-    });
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
 
     for (var option in product.options) {
       await db.insert('options', {
