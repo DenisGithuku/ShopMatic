@@ -87,7 +87,7 @@ class ProductDbManager {
         'product_id': product.id,
         'name': variant.name,
         'price': variant.price,
-        'stock': variant.stock
+        'stock': variant.stock,
       });
     }
   }
