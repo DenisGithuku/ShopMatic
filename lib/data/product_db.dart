@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+
 import 'model.dart';
 
 class ProductDbManager {
@@ -61,17 +62,20 @@ class ProductDbManager {
   Future<void> insertProduct(Product product) async {
     final db = await database;
 
-    await db.insert('products', {
-      'id': product.id,
-      'name': product.name,
-      'description': product.description,
-      'price': product.price,
-      'category': product.category,
-      'tags': product.tags.join(','),
-      'options': product.options,
-      'variants': product.variants,
-      'image': product.image
-    }, conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(
+        'products',
+        {
+          'id': product.id,
+          'name': product.name,
+          'description': product.description,
+          'price': product.price,
+          'category': product.category,
+          'tags': product.tags.join(','),
+          'options': product.options,
+          'variants': product.variants,
+          'image': product.image
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace);
 
     for (var option in product.options) {
       await db.insert('options', {
@@ -103,8 +107,7 @@ class ProductDbManager {
       List<Option> options = await _fetchOptionsForProduct(productId);
       List<Variant> variants = await _fetchVariantsForProduct(productId);
 
-      products.add(
-        Product(
+      products.add(Product(
           id: productMap['id'] as String,
           name: productMap['name'] as String,
           description: productMap['description'] as String,
@@ -113,36 +116,69 @@ class ProductDbManager {
           category: productMap['category'] as String,
           tags: (productMap['tags'] as String).split(','),
           options: options,
-          variants: variants
-        )
-      );
+          variants: variants));
     }
     return products;
   }
 
   Future<List<Option>> _fetchOptionsForProduct(String productId) async {
     final db = await database;
-    final optionMaps = await db.query('options',where: 'product_id = ?', whereArgs: [productId]);
+    final optionMaps = await db
+        .query('options', where: 'product_id = ?', whereArgs: [productId]);
 
     return optionMaps.map((optionMap) {
       return Option(
-        name: optionMap['name'] as String,
-        values: (optionMap['values'] as String).split(',')
-      );
+          name: optionMap['name'] as String,
+          values: (optionMap['values'] as String).split(','));
     }).toList();
   }
 
   Future<List<Variant>> _fetchVariantsForProduct(String productId) async {
     final db = await database;
-    final variantMaps = await db.query('variants', where: 'product_id = ?', whereArgs: [productId]);
+    final variantMaps = await db
+        .query('variants', where: 'product_id = ?', whereArgs: [productId]);
 
     return variantMaps.map((variantMap) {
       return Variant(
-        id: variantMap['id'] as String,
-        name: variantMap['name'] as String,
-        price: variantMap['price'] as double,
-        stock: variantMap['stock'] as int
-      );
+          id: variantMap['id'] as String,
+          name: variantMap['name'] as String,
+          price: variantMap['price'] as double,
+          stock: variantMap['stock'] as int);
     }).toList();
+  }
+
+  Future<void> updateProduct(Product product) async {
+    final db = await database;
+
+    await db.update(
+        'products',
+        {
+          'id': product.id,
+          'name': product.name,
+          'description': product.description,
+          'price': product.price,
+          'category': product.category,
+          'tags': product.tags.join(','),
+          'options': product.options,
+          'variants': product.variants,
+          'image': product.image
+        },
+        where: 'id = ?',
+        whereArgs: [product.id]);
+  }
+
+  Future<void> deleteProduct(Product product) async {
+    final db = await database;
+    await db.delete('products', where: 'id = ?', whereArgs: [product.id]);
+  }
+
+  Future<Product?> getProduct(String id) async {
+    final db = await database;
+    List<Map<String, dynamic>> products = await db.query('products', where: 'id = ?', whereArgs: [id]);
+    if (products.isNotEmpty) {
+      return Product.fromMap(products.first);
+    } else {
+      return null;
+    }
   }
 }
