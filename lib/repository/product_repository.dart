@@ -21,4 +21,8 @@ class ProductRepository {
   Future<void> deleteProduct(Product product) async {
     await _dbManager.deleteProduct(product);
   }
+
+  Future<Product?> getProduct(String id) async {
+    return await _dbManager.getProduct(id);
+  }
 }

@@ -171,4 +171,14 @@ class ProductDbManager {
     final db = await database;
     await db.delete('products', where: 'id = ?', whereArgs: [product.id]);
   }
+
+  Future<Product?> getProduct(String id) async {
+    final db = await database;
+    List<Map<String, dynamic>> products = await db.query('products', where: 'id = ?', whereArgs: [id]);
+    if (products.isNotEmpty) {
+      return Product.fromMap(products.first);
+    } else {
+      return null;
+    }
+  }
 }
