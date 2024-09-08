@@ -236,8 +236,8 @@ class _NewProductScreenState extends State<NewProductScreen> {
           description: _descriptionController.text,
           price: double.tryParse(_priceController.text) ?? 0.0,
           category: _categoryController.text,
-          options: _mapOptions(),
-          variants: _mapVariants(),
+          options: serializeOptions(_mapOptions()),
+          variants: serializeVariants(_mapVariants()),
           image: _imageFile?.path);
 
       _productRepository.insertProduct(product);
@@ -252,7 +252,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
 
   List<Option> _mapOptions() {
     return _optionsMap.entries.map((optionMap) {
-      return Option(name: optionMap.key, values: optionMap.value);
+      return Option(name: optionMap.key, option_values: optionMap.value);
     }).toList();
   }
 

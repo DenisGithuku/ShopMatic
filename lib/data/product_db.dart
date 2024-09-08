@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -30,30 +32,33 @@ class ProductDbManager {
     await db.execute('''CREATE TABLE products(
       id TEXT PRIMARY KEY,
       name TEXT,
+      options TEXT,
+      variants TEXT,
       description TEXT,
       price REAL,
       image TEXT,
-      category TEXT,
+      category TEXT
     )''');
 
     await db.execute('''
       CREATE TABLE options(
-      id INTEGER PRIMARY KEY AUTO_INCREMENT,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       product_id TEXT,
       name TEXT,
-      values TEXT,
+      option_values TEXT,
       FOREIGN KEY(product_id) REFERENCES products(id)
       )
       ''');
 
     await db.execute('''
       CREATE TABLE variants(
-      id TEXT PRIMARY KEY,'
+      id TEXT PRIMARY KEY,
       product_id TEXT,
       name TEXT,
       price REAL,
       stock INTEGER,
       FOREIGN KEY(product_id) REFERENCES products(id)
+      )
       ''');
   }
 
@@ -75,15 +80,15 @@ class ProductDbManager {
         },
         conflictAlgorithm: ConflictAlgorithm.replace);
 
-    for (var option in product.options) {
+    for (var option in deserializeOptions(product.options)) {
       await db.insert('options', {
         'product_id': product.id,
         'name': option.name,
-        'values': option.values.join(',')
+        'option_values': option.option_values.join(',')
       });
     }
 
-    for (var variant in product.variants) {
+    for (var variant in deserializeVariants(product.variants)) {
       await db.insert('variants', {
         'id': variant.id,
         'product_id': product.id,
@@ -112,8 +117,8 @@ class ProductDbManager {
           price: productMap['price'] as double,
           image: productMap['image'] as String,
           category: productMap['category'] as String,
-          options: options,
-          variants: variants));
+          options: serializeOptions(options),
+          variants: serializeVariants(variants)));
     }
     return products;
   }
@@ -126,7 +131,7 @@ class ProductDbManager {
     return optionMaps.map((optionMap) {
       return Option(
           name: optionMap['name'] as String,
-          values: (optionMap['values'] as String).split(','));
+          option_values: (optionMap['option_values'] as String).split(','));
     }).toList();
   }
 
