@@ -6,7 +6,6 @@ class Product {
   final String description;
   final double price;
   final String category;
-  final List<String> tags;
   final List<Option> options;
   final List<Variant> variants;
   final String? image;
@@ -17,7 +16,6 @@ class Product {
     required this.description,
     required this.price,
     required this.category,
-    required this.tags,
     required this.options,
     required this.variants,
     required this.image,
@@ -30,7 +28,6 @@ class Product {
       description: map['description'],
       price: map['price'],
       category: map['category'],
-      tags: List<String>.from(jsonDecode(map['tags'])),
       options: (jsonDecode(map['options']) as List)
           .map((e) => Option.fromMap(e))
           .toList(),
@@ -49,7 +46,6 @@ class Product {
       'description': description,
       'price': price,
       'category': category,
-      'tags': jsonEncode(tags),
       'options': jsonEncode(options.map((e) => e.toMap()).toList()),
       'variants': jsonEncode(variants.map((e) => e.toMap()).toList()),
       'image': image,

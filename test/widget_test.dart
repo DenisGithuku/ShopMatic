@@ -13,7 +13,7 @@ import 'package:product_variant_gen/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const VariantGeneratorApp());
+    await tester.pumpWidget(const ShopMatic());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

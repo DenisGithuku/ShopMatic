@@ -34,7 +34,6 @@ class ProductDbManager {
       price REAL,
       image TEXT,
       category TEXT,
-      tags TEXT
     )''');
 
     await db.execute('''
@@ -70,7 +69,6 @@ class ProductDbManager {
           'description': product.description,
           'price': product.price,
           'category': product.category,
-          'tags': product.tags.join(','),
           'options': product.options,
           'variants': product.variants,
           'image': product.image
@@ -114,7 +112,6 @@ class ProductDbManager {
           price: productMap['price'] as double,
           image: productMap['image'] as String,
           category: productMap['category'] as String,
-          tags: (productMap['tags'] as String).split(','),
           options: options,
           variants: variants));
     }
@@ -158,7 +155,6 @@ class ProductDbManager {
           'description': product.description,
           'price': product.price,
           'category': product.category,
-          'tags': product.tags.join(','),
           'options': product.options,
           'variants': product.variants,
           'image': product.image
