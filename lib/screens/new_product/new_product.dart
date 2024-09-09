@@ -8,11 +8,15 @@ import 'package:product_variant_gen/data/product_db.dart';
 import 'package:product_variant_gen/repository/product_repository.dart';
 import 'package:product_variant_gen/screens/new_product/components/add_option_button.dart';
 import 'package:product_variant_gen/screens/new_product/components/image_widget.dart';
+import 'package:product_variant_gen/screens/new_product/components/option_chips_section.dart';
 import 'package:product_variant_gen/screens/new_product/components/options_header.dart';
-
+import 'package:product_variant_gen/screens/new_product/components/option_value_input.dart';
+import 'package:product_variant_gen/screens/new_product/components/variants_table.dart';
 import 'components/user_input_field.dart';
 
 class NewProductScreen extends StatefulWidget {
+  const NewProductScreen({super.key});
+
   @override
   _NewProductScreenState createState() => _NewProductScreenState();
 }
@@ -31,13 +35,13 @@ class _NewProductScreenState extends State<NewProductScreen> {
   Map<String, bool> _enabledVariantsMap = {};
 
   // option controllers
-  Map<TextEditingController, List<TextEditingController>>
+  final Map<TextEditingController, List<TextEditingController>>
       _optionsControllersMap = {
     TextEditingController(): [TextEditingController()]
   };
 
-  Map<String, List<String>> _optionsMap = {};
-  Map<String, List<TextEditingController>> _variantsMap = {};
+  final Map<String, List<String>> _optionsMap = {};
+  final Map<String, List<TextEditingController>> _variantsMap = {};
 
   XFile? _imageFile;
   final picker = ImagePicker();
@@ -67,12 +71,6 @@ class _NewProductScreenState extends State<NewProductScreen> {
     setState(() {
       final optionController = TextEditingController();
       _optionsControllersMap[optionController] = [TextEditingController()];
-    });
-  }
-
-  void _removeOption(TextEditingController optionController) {
-    setState(() {
-      _optionsControllersMap.remove(optionController);
     });
   }
 
@@ -224,11 +222,8 @@ class _NewProductScreenState extends State<NewProductScreen> {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return Center(
-              child: Text('Saving product')
-          );
-        }
-    );
+          return Center(child: const Text('Saving product'));
+        });
     try {
       var product = Product(
           id: UniqueKey().toString(),
@@ -242,7 +237,7 @@ class _NewProductScreenState extends State<NewProductScreen> {
 
       _productRepository.insertProduct(product);
       _onShowSnackBar(context, 'Product saved successfully!');
-    } catch(e) {
+    } catch (e) {
       _onShowSnackBar(context, 'Failed to save product!');
       debugPrint(e.toString());
     } finally {
@@ -361,210 +356,84 @@ class _NewProductScreenState extends State<NewProductScreen> {
                   Navigator.pop(context);
                 }
               },
-              icon: Icon(Icons.check))
+              icon: const Icon(Icons.check))
         ],
       ),
       body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ImageWidget(
+                  imagePath: _imageFile?.path, onPickImage: _onPickImage),
+              const SizedBox(
+                height: 10.0,
+              ),
+              UserInputField(
+                controller: _titleController,
+                hintText: 'Title',
+              ),
+              const SizedBox(
+                height: 10.0,
+              ),
+              UserInputField(
+                controller: _descriptionController,
+                hintText: 'Description',
+                minLines: 2,
+                maxLines: 6,
+              ),
+              const SizedBox(
+                height: 10.0,
+              ),
+              Row(
                 children: [
-                  ImageWidget(
-                      imagePath: _imageFile?.path, onPickImage: _onPickImage),
-                  SizedBox(
-                    height: 10.0,
+                  Expanded(
+                    child: UserInputField(
+                      controller: _priceController,
+                      keyboardType: TextInputType.number,
+                      hintText: 'Price',
+                    ),
                   ),
-                  UserInputField(
-                    controller: _titleController,
-                    hintText: 'Title',
+                  const SizedBox(
+                    width: 10.0,
                   ),
-                  SizedBox(
-                    height: 10.0,
+                  Expanded(
+                    child: UserInputField(
+                      controller: _categoryController,
+                      hintText: 'Category',
+                    ),
                   ),
-                  UserInputField(
-                    controller: _descriptionController,
-                    hintText: 'Description',
-                    minLines: 2,
-                    maxLines: 6,
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Row(
+                ],
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              OptionsHeader(
+                  optionsEnabled: _optionsEnabled!,
+                  onToggleOptions: (value) => _onToggleOptions(value!)),
+              if (_optionsEnabled == true)
+                if (_optionsControllersMap.isNotEmpty && _optionsMap.isNotEmpty)
+                  // column with both chips and input and saved options
+                  Column(
                     children: [
-                      Expanded(
-                        child: UserInputField(
-                          controller: _priceController,
-                          keyboardType: TextInputType.number,
-                          hintText: 'Price',
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Expanded(
-                        child: UserInputField(
-                          controller: _categoryController,
-                          hintText: 'Category',
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  OptionsHeader(
-                      optionsEnabled: _optionsEnabled!,
-                      onToggleOptions: (value) => _onToggleOptions(value!)),
-                  if (_optionsEnabled == true)
-                    if (_optionsControllersMap.isNotEmpty &&
-                        _optionsMap.isNotEmpty)
-                      // column with both chips and input and saved options
                       Column(
                         children: [
                           Column(
-                            children: [
-                              Column(
-                                children: _optionsMap.entries.map((entry) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        entry.key,
-                                      ),
-                                      OptionChipRow(
-                                        values: entry.value,
-                                      )
-                                    ],
-                                  );
-                                }).toList(),
-                              ),
-                              Column(
+                            children: _optionsMap.entries.map((entry) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Option name'),
-                                      Column(
-                                        children: [
-                                          UserInputField(
-                                              controller: _optionsControllersMap
-                                                  .entries.last.key,
-                                              hintText: 'Size')
-                                        ],
-                                      ),
-                                    ],
+                                  Text(
+                                    entry.key,
                                   ),
-                                  SizedBox(
-                                    height: 8.0,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Option values'),
-                                      Column(
-                                        children: _optionsControllersMap
-                                            .entries.last.value
-                                            .map((controller) {
-                                          return OptionValueInputRow(
-                                              controller: controller,
-                                              onRemoveField: () {
-                                                _removeOptionValue(
-                                                  _optionsControllersMap
-                                                      .entries.last.key,
-                                                  _optionsControllersMap
-                                                      .entries.last.value
-                                                      .firstWhere((element) =>
-                                                          element.text ==
-                                                          controller.text),
-                                                );
-                                              });
-                                        }).toList(),
-                                      )
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: OutlinedButton(
-                                          onPressed: () {
-                                            if (_optionsControllersMap.entries
-                                                .any((element) => element.value
-                                                    .any((element) => element
-                                                        .text
-                                                        .trim()
-                                                        .isEmpty))) {
-                                              _onShowSnackBar(
-                                                  context, 'Invalid value');
-                                              return;
-                                            }
-                                            _onAddOptionValueField(
-                                                _optionsControllersMap
-                                                    .entries.last.key);
-                                          },
-                                          child: Text('Add value'),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 16.0,
-                                      ),
-                                      Expanded(
-                                        child: OutlinedButton(
-                                          onPressed: () {
-                                            if (_optionsControllersMap
-                                                    .isEmpty ||
-                                                _optionsControllersMap.entries
-                                                    .any(
-                                                  (option) {
-                                                    return option.value.any(
-                                                        (element) => element
-                                                            .text
-                                                            .trim()
-                                                            .isEmpty);
-                                                  },
-                                                )) {
-                                              _onShowSnackBar(
-                                                  context, 'Invalid option');
-                                              return;
-                                            }
-                                            var options = convertOptionsMap(
-                                                _optionsControllersMap);
-                                            _onStoreOption(options);
-                                          },
-                                          child: Text('Done'),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  OptionChipRow(
+                                    values: entry.value,
+                                  )
                                 ],
-                              ),
-                            ],
+                              );
+                            }).toList(),
                           ),
-                          AddOptionButton(onAddOption: () {
-                            if (_optionsControllersMap.entries.any((option) {
-                              return option.key.text.trim().isEmpty ||
-                                  option.value.any((optionValue) =>
-                                      optionValue.text.trim().isEmpty);
-                            })) {
-                              _onShowSnackBar(context, 'Invalid option');
-                            } else {
-                              var options =
-                                  convertOptionsMap(_optionsControllersMap);
-                              _onStoreOption(options);
-                              _onAddOptionField();
-                            }
-                          })
-                        ],
-                      )
-                    else if (_optionsControllersMap.isNotEmpty &&
-                        _optionsMap.isEmpty)
-                      // column with input only
-                      Column(
-                        children: [
                           Column(
                             children: [
                               Column(
@@ -574,10 +443,9 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                   Column(
                                     children: [
                                       UserInputField(
-                                        controller: _optionsControllersMap
-                                            .entries.last.key,
-                                        hintText: 'Color',
-                                      )
+                                          controller: _optionsControllersMap
+                                              .entries.last.key,
+                                          hintText: 'Size')
                                     ],
                                   ),
                                 ],
@@ -652,7 +520,6 @@ class _NewProductScreenState extends State<NewProductScreen> {
                                         }
                                         var options = convertOptionsMap(
                                             _optionsControllersMap);
-
                                         _onStoreOption(options);
                                       },
                                       child: Text('Done'),
@@ -662,300 +529,173 @@ class _NewProductScreenState extends State<NewProductScreen> {
                               ),
                             ],
                           ),
-                          AddOptionButton(onAddOption: () {
-                            if (_optionsControllersMap.entries.any((option) {
-                              return option.key.text.trim().isEmpty ||
-                                  option.value.any((optionValue) =>
-                                      optionValue.text.trim().isEmpty);
-                            })) {
-                              _onShowSnackBar(context, 'Invalid option');
-                            } else {
-                              var options =
-                                  convertOptionsMap(_optionsControllersMap);
-                              _onStoreOption(options);
-                              _onAddOptionField();
-                            }
-                          })
                         ],
-                      )
-                    else
-                      // column with saved options only
-                      OptionChipsSection(
-                          optionsMap: _optionsMap,
-                          onAddOption: () {
-                            if (_optionsControllersMap.entries.any((option) {
-                              return option.key.text.trim().isEmpty ||
-                                  option.value.any((optionValue) =>
-                                      optionValue.text.trim().isEmpty);
-                            })) {
-                              _onShowSnackBar(context, 'Invalid option');
-                            } else {
-                              var options =
-                                  convertOptionsMap(_optionsControllersMap);
-                              _onStoreOption(options);
-                              _onAddOptionField();
-                            }
-                          })
-                  else
-                    SizedBox(
-                      height: 0.0,
-                    ),
-                  if (_optionsEnabled ?? true && _optionsMap.isNotEmpty)
-                    VariantsTable(
-                        variants: _variantsMap,
-                        enabledVariants: _enabledVariantsMap,
-                        allVariantsEnabled: _allVariantsEnabled!,
-                        onToggleAllVariants: (value) =>
-                            _onToggleAllVariants(value),
-                        onToggleVariant: (value) => _onToggleVariant(value))
-                  else
-                    SizedBox(height: 0.0)
-                ],
-              ),
-            ),
+                      ),
+                      AddOptionButton(onAddOption: () {
+                        if (_optionsControllersMap.entries.any((option) {
+                          return option.key.text.trim().isEmpty ||
+                              option.value.any((optionValue) =>
+                                  optionValue.text.trim().isEmpty);
+                        })) {
+                          _onShowSnackBar(context, 'Invalid option');
+                        } else {
+                          var options =
+                              convertOptionsMap(_optionsControllersMap);
+                          _onStoreOption(options);
+                          _onAddOptionField();
+                        }
+                      })
+                    ],
+                  )
+                else if (_optionsControllersMap.isNotEmpty &&
+                    _optionsMap.isEmpty)
+                  // column with input only
+                  Column(
+                    children: [
+                      Column(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Option name'),
+                              Column(
+                                children: [
+                                  UserInputField(
+                                    controller:
+                                        _optionsControllersMap.entries.last.key,
+                                    hintText: 'Color',
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 8.0,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Option values'),
+                              Column(
+                                children: _optionsControllersMap
+                                    .entries.last.value
+                                    .map((controller) {
+                                  return OptionValueInputRow(
+                                      controller: controller,
+                                      onRemoveField: () {
+                                        _removeOptionValue(
+                                          _optionsControllersMap
+                                              .entries.last.key,
+                                          _optionsControllersMap
+                                              .entries.last.value
+                                              .firstWhere((element) =>
+                                                  element.text ==
+                                                  controller.text),
+                                        );
+                                      });
+                                }).toList(),
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton(
+                                  onPressed: () {
+                                    if (_optionsControllersMap.entries.any(
+                                        (element) => element.value.any(
+                                            (element) =>
+                                                element.text.trim().isEmpty))) {
+                                      _onShowSnackBar(context, 'Invalid value');
+                                      return;
+                                    }
+                                    _onAddOptionValueField(
+                                        _optionsControllersMap
+                                            .entries.last.key);
+                                  },
+                                  child: Text('Add value'),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 16.0,
+                              ),
+                              Expanded(
+                                child: OutlinedButton(
+                                  onPressed: () {
+                                    if (_optionsControllersMap.isEmpty ||
+                                        _optionsControllersMap.entries.any(
+                                          (option) {
+                                            return option.value.any((element) =>
+                                                element.text.trim().isEmpty);
+                                          },
+                                        )) {
+                                      _onShowSnackBar(
+                                          context, 'Invalid option');
+                                      return;
+                                    }
+                                    var options = convertOptionsMap(
+                                        _optionsControllersMap);
+
+                                    _onStoreOption(options);
+                                  },
+                                  child: Text('Done'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      AddOptionButton(onAddOption: () {
+                        if (_optionsControllersMap.entries.any((option) {
+                          return option.key.text.trim().isEmpty ||
+                              option.value.any((optionValue) =>
+                                  optionValue.text.trim().isEmpty);
+                        })) {
+                          _onShowSnackBar(context, 'Invalid option');
+                        } else {
+                          var options =
+                              convertOptionsMap(_optionsControllersMap);
+                          _onStoreOption(options);
+                          _onAddOptionField();
+                        }
+                      })
+                    ],
+                  )
+                else
+                  // column with saved options only
+                  OptionChipsSection(
+                      optionsMap: _optionsMap,
+                      onAddOption: () {
+                        if (_optionsControllersMap.entries.any((option) {
+                          return option.key.text.trim().isEmpty ||
+                              option.value.any((optionValue) =>
+                                  optionValue.text.trim().isEmpty);
+                        })) {
+                          _onShowSnackBar(context, 'Invalid option');
+                        } else {
+                          var options =
+                              convertOptionsMap(_optionsControllersMap);
+                          _onStoreOption(options);
+                          _onAddOptionField();
+                        }
+                      })
+              else
+                const SizedBox(
+                  height: 0.0,
+                ),
+              if (_optionsEnabled ?? true && _optionsMap.isNotEmpty)
+                VariantsTable(
+                    variants: _variantsMap,
+                    enabledVariants: _enabledVariantsMap,
+                    allVariantsEnabled: _allVariantsEnabled!,
+                    onToggleAllVariants: (value) => _onToggleAllVariants(value),
+                    onToggleVariant: (value) => _onToggleVariant(value))
+              else
+                const SizedBox(height: 0.0)
+            ],
           ),
-      );
-  }
-}
-
-class OptionValueInputRow extends StatelessWidget {
-  final TextEditingController controller;
-  final Function() onRemoveField;
-
-  const OptionValueInputRow(
-      {super.key, required this.controller, required this.onRemoveField});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        children: [
-          Expanded(
-              child: UserInputField(
-            controller: controller,
-            hintText: 'Value',
-          )),
-          IconButton(onPressed: onRemoveField, icon: Icon(Icons.delete_outline))
-        ],
+        ),
       ),
     );
-  }
-}
-
-class OptionChipRow extends StatelessWidget {
-  final List<String> values;
-  const OptionChipRow({super.key, required this.values});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      child: Wrap(
-          spacing: 8.0,
-          runSpacing: 4.0,
-          children: values.map(
-            (value) {
-              return Chip(
-                label: Text(value),
-              );
-            },
-          ).toList()),
-    );
-  }
-}
-
-class OptionChipsSection extends StatelessWidget {
-  final Map<String, List<String>> optionsMap;
-  final Function() onAddOption;
-
-  const OptionChipsSection(
-      {super.key, required this.optionsMap, required this.onAddOption});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Column(
-          children: optionsMap.entries.map((entry) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  entry.key,
-                ),
-                OptionChipRow(values: entry.value)
-              ],
-            );
-          }).toList(),
-        ),
-        AddOptionButton(onAddOption: onAddOption)
-      ],
-    );
-  }
-}
-
-class ControllersSection extends StatelessWidget {
-  final Map<TextEditingController, List<TextEditingController>>
-      optionControllersMap;
-  final Function(TextEditingController) onRemoveField;
-  final Function() onStoreOption;
-  final Function() onAddOption;
-  final Function() onAddOptionValue;
-
-  const ControllersSection(
-      {super.key,
-      required this.optionControllersMap,
-      required this.onRemoveField,
-      required this.onStoreOption,
-      required this.onAddOption,
-      required this.onAddOptionValue});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Column(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Option name'),
-                Column(
-                  children: [
-                    UserInputField(
-                      controller: optionControllersMap.entries.last.key,
-                      hintText: 'Color',
-                    )
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 8.0,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Option values'),
-                Column(
-                  children:
-                      optionControllersMap.entries.last.value.map((controller) {
-                    return OptionValueInputRow(
-                        controller: controller,
-                        onRemoveField: onRemoveField(controller));
-                  }).toList(),
-                )
-              ],
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: onAddOptionValue,
-                    child: Text('Add value'),
-                  ),
-                ),
-                SizedBox(
-                  width: 16.0,
-                ),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: onStoreOption,
-                    child: Text('Done'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        AddOptionButton(onAddOption: onAddOption)
-      ],
-    );
-  }
-}
-
-class VariantsTable extends StatelessWidget {
-  final Map<String, List<TextEditingController>> variants;
-  final Map<String, bool> enabledVariants;
-  final bool allVariantsEnabled;
-  final Function(bool) onToggleAllVariants;
-  final Function(String) onToggleVariant;
-
-  const VariantsTable(
-      {super.key,
-      required this.variants,
-      required this.enabledVariants,
-      required this.allVariantsEnabled,
-      required this.onToggleAllVariants,
-      required this.onToggleVariant});
-
-  @override
-  Widget build(BuildContext context) {
-    return Table(columnWidths: const <int, TableColumnWidth>{
-      0: FixedColumnWidth(40.0),
-      // Adjust as needed
-      1: FlexColumnWidth(),
-      2: FixedColumnWidth(80.0),
-      3: FixedColumnWidth(80.0),
-    }, children: [
-      TableRow(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0, right: 16.0),
-            child: Checkbox(
-              value: allVariantsEnabled,
-              onChanged: (value) => onToggleAllVariants(value!),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 16.0),
-            child:
-                Text('Variant', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 16.0),
-            child: Text('Price', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 16.0),
-            child:
-                Text('Quantity', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-      for (var variant in variants.entries)
-        TableRow(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 16.0),
-              child: Checkbox(
-                value: enabledVariants.keys.contains(variant.key),
-                onChanged: (value) => onToggleVariant(variant.key),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0, left: 16.0),
-              child: Text(variant.key),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: UserInputField(
-                controller: variant.value.first,
-                hintText: '0.0',
-                keyboardType: TextInputType.number,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: UserInputField(
-                controller: variant.value.last,
-                hintText: '0',
-                keyboardType: TextInputType.number,
-              ),
-            ),
-          ],
-        ),
-    ]);
   }
 }
