@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:product_variant_gen/data/model.dart';
 import 'package:product_variant_gen/data/product_db.dart';
 import 'package:product_variant_gen/repository/product_repository.dart';
+import 'package:product_variant_gen/screens/new_product/components/product_item.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -69,16 +70,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ));
     }
 
-    return ListView.builder(
-      itemCount: _products.length,
-      itemBuilder: (context, index) {
-        final product = _products[index];
-        return ListTile(
-          title: Text(product.name),
-          subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
-          // Add any other UI for the product here
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView.builder(
+        itemCount: _products.length,
+        itemBuilder: (context, index) {
+          final product = _products[index];
+          return ProductItem(product: product);
+        },
+      ),
     );
   }
 }
