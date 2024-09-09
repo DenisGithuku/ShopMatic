@@ -1,4 +1,4 @@
-package com.example.product_variant_gen
+package com.githukudenis.shopmatic
 
 import io.flutter.embedding.android.FlutterActivity
 

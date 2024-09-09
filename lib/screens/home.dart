@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:product_variant_gen/data/model.dart';
-import 'package:product_variant_gen/data/product_db.dart';
-import 'package:product_variant_gen/repository/product_repository.dart';
-import 'package:product_variant_gen/screens/new_product/components/product_item.dart';
+import 'package:shopmatic/data/model.dart';
+import 'package:shopmatic/data/product_db.dart';
+import 'package:shopmatic/repository/product_repository.dart';
+import 'package:shopmatic/screens/new_product/components/product_item.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

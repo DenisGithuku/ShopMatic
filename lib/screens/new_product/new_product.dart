@@ -3,15 +3,15 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:product_variant_gen/data/model.dart';
-import 'package:product_variant_gen/data/product_db.dart';
-import 'package:product_variant_gen/repository/product_repository.dart';
-import 'package:product_variant_gen/screens/new_product/components/add_option_button.dart';
-import 'package:product_variant_gen/screens/new_product/components/image_widget.dart';
-import 'package:product_variant_gen/screens/new_product/components/option_chips_section.dart';
-import 'package:product_variant_gen/screens/new_product/components/options_header.dart';
-import 'package:product_variant_gen/screens/new_product/components/option_value_input.dart';
-import 'package:product_variant_gen/screens/new_product/components/variants_table.dart';
+import 'package:shopmatic/data/model.dart';
+import 'package:shopmatic/data/product_db.dart';
+import 'package:shopmatic/repository/product_repository.dart';
+import 'package:shopmatic/screens/new_product/components/add_option_button.dart';
+import 'package:shopmatic/screens/new_product/components/image_widget.dart';
+import 'package:shopmatic/screens/new_product/components/option_chips_section.dart';
+import 'package:shopmatic/screens/new_product/components/options_header.dart';
+import 'package:shopmatic/screens/new_product/components/option_value_input.dart';
+import 'package:shopmatic/screens/new_product/components/variants_table.dart';
 import 'components/user_input_field.dart';
 
 class NewProductScreen extends StatefulWidget {
