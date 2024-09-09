@@ -25,10 +25,9 @@ The project uses the default state management provided by Flutter. While this is
 <p align = "center">
 <img src = "https://github.com/user-attachments/assets/f55bcbe2-9c94-46bc-9b5e-923f2280dd7f" width = "30%" height = "30%" />
 <img src = "https://github.com/user-attachments/assets/c9c5833d-2c3b-4ecd-8364-233110fed907" width = "30%" height = "30%" />
-<video width = "200" height = "150" controls> 
-<source src = "https://youtu.be/zAhGsA0h_ZQ?si=3BXgnjQutmdr3yX9" type = "video/mp4" />
-Your browser does not support the video tag.
-</video>
+<img src = "https://github.com/user-attachments/assets/7c4d4c24-740c-415d-9d5d-9b07824b04f1" width = "30%" height = "30%" />
+<img src = "https://github.com/user-attachments/assets/0447db3f-9711-4e2c-9f7e-7aa24f485b48" width = "30%" height = "30%" />
+<img src = "https://github.com/user-attachments/assets/d17cf55b-ebb7-4975-813a-c2dafb0b4e1b" width = "30%" height = "30%" />
 </p>
 
 ## Installation
