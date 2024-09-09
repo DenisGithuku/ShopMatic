@@ -26,7 +26,7 @@ The project uses the default state management provided by Flutter. While this is
 <img src = "https://github.com/user-attachments/assets/f55bcbe2-9c94-46bc-9b5e-923f2280dd7f" width = "30%" height = "30%" />
 <img src = "https://github.com/user-attachments/assets/c9c5833d-2c3b-4ecd-8364-233110fed907" width = "30%" height = "30%" />
 <video width = "200" height = "150" controls> 
-<source src = "https://drive.google.com/file/d/1aCMQJW-HMdjVpRgM-K5-gGB1bNnWyr-E/view?usp=sharing" type = "video/mp4" />
+<source src = "https://drive.google.com/uc?export=download&id=1aCMQJW-HMdjVpRgM-K5-gGB1bNnWyr-E" type = "video/mp4" />
 Your browser does not support the video tag.
 </video>
 </p>
