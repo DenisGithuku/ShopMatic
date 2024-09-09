@@ -24,6 +24,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchProducts();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchProducts();
+  }
+
   Future<void> _fetchProducts() async {
     try {
       // Fetch the list of products
@@ -44,28 +50,29 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Home'),
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.pushNamed(context, "/new_product"),
-            icon: Icon(Icons.add)
-          )
-        ],
-      ),
-      body: _buildProductList(context)
-    );
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('My Products'),
+          actions: [
+            IconButton(
+                onPressed: () => Navigator.pushNamed(context, "/new_product"),
+                icon: Icon(Icons.add))
+          ],
+        ),
+        body: _buildProductList(context));
   }
 
   Widget _buildProductList(BuildContext context) {
     if (_products.isEmpty) {
-      return Center(child: Column(
+      return Center(
+          child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text('No products available.'),
-          FilledButton.tonal(onPressed: () => Navigator.pushNamed(context, "/new_product"), child: Text('Add product'))
+          FilledButton.tonal(
+              onPressed: () => Navigator.pushNamed(context, "/new_product"),
+              child: Text('Add product'))
         ],
       ));
     }
