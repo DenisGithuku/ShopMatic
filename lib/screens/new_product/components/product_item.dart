@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:product_variant_gen/data/model.dart';
+import 'package:shopmatic/data/model.dart';
 
 class ProductItem extends StatelessWidget {
   final Product product;

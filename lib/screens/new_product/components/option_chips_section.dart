@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:product_variant_gen/screens/new_product/components/add_option_button.dart';
+import 'package:shopmatic/screens/new_product/components/add_option_button.dart';
 
 class OptionChipRow extends StatelessWidget {
   final List<String> values;

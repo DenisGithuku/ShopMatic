@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:product_variant_gen/screens/new_product/components/user_input_field.dart';
+import 'package:shopmatic/screens/new_product/components/user_input_field.dart';
 
 
 class VariantsTable extends StatelessWidget {

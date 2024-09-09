@@ -1,5 +1,7 @@
-name: product_variant_gen
-description: "A new Flutter project."
+name: shopmatic
+description: "A Flutter app for managing and generating product variants based on user-defined options and values. 
+  Users can add product options (e.g., size, color), specify their values, and generate all possible variants. 
+  The app focuses on providing an intuitive UI for option management and variant generation without backend integration."
 publish_to: 'none'
 
 version: 1.0.0+1
