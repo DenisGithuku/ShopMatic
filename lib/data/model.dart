@@ -6,9 +6,8 @@ class Product {
   final String description;
   final double price;
   final String category;
-  final List<String> tags;
-  final List<Option> options;
-  final List<Variant> variants;
+  final String options;
+  final String variants;
   final String? image;
 
   Product({
@@ -17,7 +16,6 @@ class Product {
     required this.description,
     required this.price,
     required this.category,
-    required this.tags,
     required this.options,
     required this.variants,
     required this.image,
@@ -30,13 +28,8 @@ class Product {
       description: map['description'],
       price: map['price'],
       category: map['category'],
-      tags: List<String>.from(jsonDecode(map['tags'])),
-      options: (jsonDecode(map['options']) as List)
-          .map((e) => Option.fromMap(e))
-          .toList(),
-      variants: (jsonDecode(map['variants']) as List)
-          .map((e) => Variant.fromMap(e))
-          .toList(),
+      options: map['options'],
+      variants: map['variants'],
       image: map['image'],
     );
   }
@@ -49,9 +42,8 @@ class Product {
       'description': description,
       'price': price,
       'category': category,
-      'tags': jsonEncode(tags),
-      'options': jsonEncode(options.map((e) => e.toMap()).toList()),
-      'variants': jsonEncode(variants.map((e) => e.toMap()).toList()),
+      'options': options,
+      'variants': variants,
       'image': image,
     };
   }
@@ -59,15 +51,15 @@ class Product {
 
 class Option {
   final String name;
-  final List<String> values;
+  final List<String> option_values;
 
-  Option({required this.name, required this.values});
+  Option({required this.name, required this.option_values});
 
   // Convert a map to an Option instance
   factory Option.fromMap(Map<String, dynamic> map) {
     return Option(
       name: map['name'],
-      values: List<String>.from(map['values']),
+      option_values: List<String>.from(map['option_values']),
     );
   }
 
@@ -75,7 +67,7 @@ class Option {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'values': values,
+      'option_values': option_values,
     };
   }
 }
@@ -106,4 +98,26 @@ class Variant {
   Map<String, dynamic> toMap() {
     return {'id': id, 'name': name, 'price': price, 'stock': stock};
   }
+}
+
+// Convert List<Option> to JSON string
+String serializeOptions(List<Option> options) {
+  return jsonEncode(options.map((option) => option.toMap()).toList());
+}
+
+// Convert List<Variant> to JSON string
+String serializeVariants(List<Variant> variants) {
+  return jsonEncode(variants.map((variant) => variant.toMap()).toList());
+}
+
+// Convert JSON string back to List<Option>
+List<Option> deserializeOptions(String jsonString) {
+  final List<dynamic> jsonList = jsonDecode(jsonString);
+  return jsonList.map((json) => Option.fromMap(json)).toList();
+}
+
+// Convert JSON string back to List<Variant>
+List<Variant> deserializeVariants(String jsonString) {
+  final List<dynamic> jsonList = jsonDecode(jsonString);
+  return jsonList.map((json) => Variant.fromMap(json)).toList();
 }
